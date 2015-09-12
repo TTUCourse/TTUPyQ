@@ -12,9 +12,12 @@ func main() {
             "title": "傳說中的考古題系統",
         })
     })
-    r.GET("/user/:name", func(c *gin.Context) {
-        name := c.Param("name")
-        c.String(http.StatusOK, "Hello %s", name)
+    r.GET("/posts/:id", func(c *gin.Context) {
+        id := c.Param("id")
+        c.String(http.StatusOK, "posts.tmpl", gin.H {
+            "title": "傳說中的考古題系統",
+            "content": "",
+        })
     })
     r.GET("/user/:name/*action", func(c *gin.Context) {
         name := c.Param("name")
@@ -22,5 +25,5 @@ func main() {
         message := name + " is " + action
         c.String(http.StatusOK, message)
     })
-    r.Run(":80")
+    r.Run(":8000")
 }
