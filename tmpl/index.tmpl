@@ -4,9 +4,15 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>{{ .title }}</title>
-  <link rel="stylesheet" href="">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 </head>
-<body>
-  
+<body class="container">
+  <div id="posts"></div>
+  <script src="assets/jquery-1.11.3.min.js"></script>
+  <script src="assets/jquery.jsontotable.min.js"></script>
+  <script>
+    var data = [['標題', '作者', '時間'], ['Hello', 'Fine', 'Thank you']];
+    $.jsontotable(data, { id: '#posts', header: true, className: 'table table-hover'  });
+  </script>
 </body>
 </html>
