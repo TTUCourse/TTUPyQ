@@ -7,12 +7,21 @@ import "gopkg.in/gcfg.v1"
 import "gopkg.in/gorp.v1"
 import "log"
 import "net/http"
+import "strconv"
+import "fmt"
 
 type PYQ struct {
 	Id		int64
 	Author	string
 	Title	string
 	Content	string
+	Time	string
+}
+
+type PostInfo struct {
+	Id		int64
+	Author	string
+	Title	string
 	Time	string
 }
 
@@ -37,6 +46,7 @@ func main() {
         })
     })
     route.GET("/posts/:id", getPostsId)
+	route.POST("/api/posts/", postApiPostsPage)
     route.Run(":8000")
 }
 
@@ -70,6 +80,7 @@ func initDb() *gorp.DbMap {
 
 func checkErr(err error, msg string) {
 	if err != nil {
+		panic(err.Error())
 		log.Fatalln(msg, err)
 	}
 }
@@ -88,4 +99,15 @@ func getPostsId(c *gin.Context) {
 	}
 }
 
-
+func postApiPostsPage(c *gin.Context) {
+	page, _ := strconv.ParseInt(c.PostForm("p"), 0, 64)
+	fmt.Printf("%d\n",page)
+	var list []PostInfo
+	_, err := dbmap.Select(&list, "SELECT id, author, title, time FROM PYQ LIMIT ?,10", (page - 1) * 10)
+	if err == nil {
+		c.JSON(http.StatusOK, list)
+	}else{
+		checkErr(err, "postApi Error")
+		c.JSON(http.StatusNotFound, gin.H{"error": "not found"})
+	}
+}
