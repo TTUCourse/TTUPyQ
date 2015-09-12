@@ -46,6 +46,7 @@ func main() {
         })
     })
     route.GET("/posts/:id", getPostsId)
+    route.POST("posts/", postPostsSave)
     route.POST("/api/posts/", postApiPostsPage)
     route.Run(":8000")
 }
@@ -105,5 +106,21 @@ func postApiPostsPage(c *gin.Context) {
     } else {
         checkErr(err, "postApi Error")
         c.JSON(http.StatusNotFound, gin.H{"error": "not found"})
+    }
+}
+
+func postPostsSave(c *gin.Context) {
+    author := c.PostForm("author")
+    title := c.PostForm("title")
+    content := c.PostForm("content")
+    insert, _ := dbmap.Exec("INSERT INTO PYQ (author, title, content) VALUES (?, ?, ?)", author, title, content)
+    if insert != nil {
+        id, err := insert.LastInsertId()
+        if err == nil {
+            c.Redirect(http.StatusMovedPermanently, "/posts/" + strconv.FormatInt(id, 10))
+        } else {
+            checkErr(err, "Insert failed")
+            c.String(http.StatusInternalServerError, "Insert faild")
+        }
     }
 }
