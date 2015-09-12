@@ -6,6 +6,7 @@ import "net/http"
 func main() {
     r := gin.Default()
     r.LoadHTMLGlob("tmpl/*")
+    r.Static("/assets", "assets")
     r.GET("/", func(c *gin.Context) {
         c.HTML(http.StatusOK, "index.tmpl", gin.H {
             "title": "傳說中的考古題系統",
