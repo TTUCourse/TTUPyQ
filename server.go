@@ -55,13 +55,10 @@ var config = LoadConfiguration()
 func LoadConfiguration() Config {
     var err error
     var cfg configFile
-
     err = gcfg.ReadFileInto(&cfg, "./server.conf")
-
     if err != nil {
         panic(err.Error())
     }
-
     return cfg.Server
 }
 
@@ -93,8 +90,7 @@ func getPostsId(c *gin.Context) {
             "title": "傳說中的考古題系統",
             "content": content,
         })
-    }
-    else {
+    } else {
         c.String(http.StatusNotFound, "安安沒找到喔")
     }
 }
@@ -106,8 +102,7 @@ func postApiPostsPage(c *gin.Context) {
     _, err := dbmap.Select(&list, "SELECT id, author, title, time FROM PYQ LIMIT ?,10", (page - 1) * 10)
     if err == nil {
         c.JSON(http.StatusOK, list)
-    }
-    else {
+    } else {
         checkErr(err, "postApi Error")
         c.JSON(http.StatusNotFound, gin.H{"error": "not found"})
     }
