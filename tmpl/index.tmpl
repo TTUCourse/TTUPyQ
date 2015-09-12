@@ -11,8 +11,15 @@
   <script src="assets/jquery-1.11.3.min.js"></script>
   <script src="assets/jquery.jsontotable.min.js"></script>
   <script>
-    var data = [['標題', '作者', '時間'], ['Hello', 'Fine', 'Thank you']];
-    $.jsontotable(data, { id: '#posts', header: true, className: 'table table-hover'  });
+    $.post("/api/posts", {p: 1}, function(res) {
+      var data = [['標題', '作者', '時間']];
+      res.forEach(fuction(e){
+        var title = '<a href="/posts/' + e.Id + '">' + e.Title + '</a>';
+        var author = '<a href="#">' + e.Author + '</a>';
+        data.push([title, author, e.Time]);
+      })
+      $.jsontotable(data, { id: '#posts', header: true, className: 'table table-hover'  });
+    });
   </script>
 </body>
 </html>
