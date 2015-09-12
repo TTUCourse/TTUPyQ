@@ -8,7 +8,7 @@ func main() {
     r.LoadHTMLGlob("tmpl/*")
     r.GET("/", func(c *gin.Context) {
         c.HTML(http.StatusOK, "index.tmpl", gin.H {
-            "title": "Main website",
+            "title": "傳說中的考古題系統",
         })
     })
     r.GET("/user/:name", func(c *gin.Context) {
