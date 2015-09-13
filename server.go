@@ -41,15 +41,12 @@ func main() {
     route := gin.Default()
     route.LoadHTMLGlob("tmpl/*")
     route.Static("/assets", "assets")
-    route.GET("/", func(c *gin.Context) {
-        c.HTML(http.StatusOK, "index.tmpl", gin.H {
-            "title": "傳說中的考古題系統",
-        })
-    })
+    route.GET("/", getIndex)
     route.GET("/posts/:id", getPostsId)
     route.GET("/posts", getPostsSave)
     route.POST("/posts", postPostsSave)
     route.POST("/api/posts", postApiPostsPage)
+    route.DELETE("/posts/:id", delPostsId)
     route.Run(":8000")
 }
 
@@ -82,6 +79,12 @@ func checkErr(err error, msg string) {
     if err != nil {
         log.Fatalln(msg, err)
     }
+}
+
+func getIndex(c *gin.Context) {
+    c.HTML(http.StatusOK, "index.tmpl", gin.H {
+        "title": "傳說中的考古題系統",
+    })
 }
 
 func getPostsId(c *gin.Context) {
@@ -134,5 +137,15 @@ func getPostsSave(c *gin.Context) {
     c.HTML(http.StatusOK, "uploads.tmpl", gin.H {
         "title": "上傳傳說中的考古題",
     })
+}
+
+func delPostsId(c *gin.Context) {
+    id := c.Param("id")
+    _, err := dbmap.Exec("DELETE FROM PYQ WHERE id = ?", id)
+    if err == nil {
+        c.String(http.StatusOK, "安安刪掉惹喔")
+    } else {
+        c.String(http.StatusNotFound, "安安沒找到喔")
+    }
 }
 
