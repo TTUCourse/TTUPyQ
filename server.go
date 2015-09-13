@@ -9,7 +9,7 @@ import "html/template"
 import "log"
 import "net/http"
 import "strconv"
-import "fmt"
+import "strings"
 
 type PYQ struct {
     Id      int64
@@ -47,11 +47,7 @@ func main() {
         })
     })
     route.GET("/posts/:id", getPostsId)
-    route.GET("/posts", func(c *gin.Context) {
-        c.HTML(http.StatusOK, "uploads.tmpl", gin.H {
-            "title": "上傳傳說中的考古題",
-        })
-    })
+    route.GET("/posts", getPostsSave)
     route.POST("/posts", postPostsSave)
     route.POST("/api/posts", postApiPostsPage)
     route.Run(":8000")
@@ -90,12 +86,12 @@ func checkErr(err error, msg string) {
 
 func getPostsId(c *gin.Context) {
     id := c.Param("id")
-    var content string
-    err := dbmap.SelectOne(&content, "SELECT content FROM PYQ WHERE id = ?", id)
+    var info PYQ
+    err := dbmap.SelectOne(&info, "SELECT * FROM PYQ WHERE id = ?", id)
     if err == nil {
         c.HTML(http.StatusOK, "posts.tmpl", gin.H {
-            "title": "傳說中的考古題系統",
-            "content": content,
+            "title": info.Title,
+            "content": info.Content,
         })
     } else {
         c.String(http.StatusNotFound, "安安沒找到喔")
@@ -104,7 +100,6 @@ func getPostsId(c *gin.Context) {
 
 func postApiPostsPage(c *gin.Context) {
     page, _ := strconv.ParseInt(c.PostForm("p"), 0, 64)
-    fmt.Printf("%d\n",page)
     var list []PostInfo
     _, err := dbmap.Select(&list, "SELECT id, author, title, time FROM PYQ LIMIT ?,10", (page - 1) * 10)
     if err == nil {
@@ -116,9 +111,13 @@ func postApiPostsPage(c *gin.Context) {
 }
 
 func postPostsSave(c *gin.Context) {
-    author := template.HTMLEscapeString(c.PostForm("author"))
-    title := template.HTMLEscapeString(c.PostForm("title"))
-    content := c.PostForm("content")
+    author := strings.TrimSpace(template.HTMLEscapeString(c.PostForm("author")))
+    title := strings.TrimSpace(template.HTMLEscapeString(c.PostForm("title")))
+    content := strings.TrimSpace(c.PostForm("content"))
+    if author == "" || title == "" || content == "" {
+        getPostsSave(c)
+        return
+    }
     insert, _ := dbmap.Exec("INSERT INTO PYQ (author, title, content) VALUES (?, ?, ?)", author, title, content)
     if insert != nil {
         id, err := insert.LastInsertId()
@@ -129,5 +128,11 @@ func postPostsSave(c *gin.Context) {
             c.String(http.StatusInternalServerError, "Insert faild")
         }
     }
+}
+
+func getPostsSave(c *gin.Context) {
+    c.HTML(http.StatusOK, "uploads.tmpl", gin.H {
+        "title": "上傳傳說中的考古題",
+    })
 }
 
