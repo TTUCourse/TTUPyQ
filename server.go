@@ -5,6 +5,7 @@ import "github.com/gin-gonic/gin"
 import _ "github.com/go-sql-driver/mysql"
 import "gopkg.in/gcfg.v1"
 import "gopkg.in/gorp.v1"
+import "html/template"
 import "log"
 import "net/http"
 import "strconv"
@@ -115,8 +116,8 @@ func postApiPostsPage(c *gin.Context) {
 }
 
 func postPostsSave(c *gin.Context) {
-    author := c.PostForm("author")
-    title := c.PostForm("title")
+    author := template.HTMLEscapeString(c.PostForm("author"))
+    title := template.HTMLEscapeString(c.PostForm("title"))
     content := c.PostForm("content")
     insert, _ := dbmap.Exec("INSERT INTO PYQ (author, title, content) VALUES (?, ?, ?)", author, title, content)
     if insert != nil {
@@ -129,3 +130,4 @@ func postPostsSave(c *gin.Context) {
         }
     }
 }
+
