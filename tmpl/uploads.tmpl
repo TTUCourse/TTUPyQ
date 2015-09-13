@@ -7,16 +7,14 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 </head>
 <body class="container">
-  <div id="posts"></div>
-  <script src="assets/jquery-1.11.3.min.js"></script>
-  <script src="assets/jquery.jsontotable.min.js"></script>
-  <form action="posts" method="POST">
-    Title:<input type="text" name="title">
-    Author:<input type="text" name="author">
-    Content:<textarea name="content"></textarea>
+  <form action="/posts" method="POST">
+    <span>Title:</span>
+    <input type="text" name="title">
+    <span>Author:</span>
+    <input type="text" name="author">
+    <span>Content:</span>
+    <textarea name="content"></textarea>
     <input type="hidden" name="_token" value="">
   </form>
 </body>
 </html>
-
-

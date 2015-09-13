@@ -46,8 +46,13 @@ func main() {
         })
     })
     route.GET("/posts/:id", getPostsId)
-    route.POST("posts/", postPostsSave)
-    route.POST("/api/posts/", postApiPostsPage)
+    route.GET("/posts", func(c *gin.Context) {
+        c.HTML(http.StatusOK, "uploads.tmpl", gin.H {
+            "title": "上傳傳說中的考古題",
+        })
+    })
+    route.POST("/posts", postPostsSave)
+    route.POST("/api/posts", postApiPostsPage)
     route.Run(":8000")
 }
 
